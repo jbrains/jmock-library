@@ -3,6 +3,7 @@ package org.jmock.test.acceptance;
 import org.jmock.AbstractExpectations;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.api.Action;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -23,7 +24,8 @@ public class ConflictingExpectationsTest {
         final ArbitraryInterface allowing = expectations.allowing(arbitraryInterface);
         final String matchParameterForStub = expectations.with("::arbitrary parameter::");
         allowing.arbitraryMethod(matchParameterForStub);
-        expectations.will(AbstractExpectations.returnValue("::stub return value::"));
+        final Action returnValueAction = AbstractExpectations.returnValue("::stub return value::");
+        expectations.will(returnValueAction);
 
         expectations.oneOf(arbitraryInterface).arbitraryMethod(expectations.with("::arbitrary parameter::"));
         expectations.will(AbstractExpectations.returnValue("::expectation return value::"));

@@ -18,7 +18,11 @@ public class ConflictingExpectationsTest {
         // Expectations is VERY state-sensitive, so assume that all attempts
         // to re-order statements (such as by extracting variables) will fail.
         final Expectations expectations = new Expectations();
-        expectations.allowing(arbitraryInterface).arbitraryMethod(expectations.with("::arbitrary parameter::"));
+
+        // allowing() must come before with()
+        final ArbitraryInterface allowing = expectations.allowing(arbitraryInterface);
+        final String matchParameterForStub = expectations.with("::arbitrary parameter::");
+        allowing.arbitraryMethod(matchParameterForStub);
         expectations.will(AbstractExpectations.returnValue("::stub return value::"));
 
         expectations.oneOf(arbitraryInterface).arbitraryMethod(expectations.with("::arbitrary parameter::"));

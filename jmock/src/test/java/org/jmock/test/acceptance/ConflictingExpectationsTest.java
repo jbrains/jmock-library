@@ -15,6 +15,8 @@ public class ConflictingExpectationsTest {
     public void sameMethodSameParameters() throws Exception {
         final ArbitraryInterface arbitraryInterface = context.mock(ArbitraryInterface.class);
 
+        // Expectations is VERY state-sensitive, so assume that all attempts
+        // to re-order statements (such as by extracting variables) will fail.
         final Expectations expectations = new Expectations();
         expectations.allowing(arbitraryInterface).arbitraryMethod(expectations.with("::arbitrary parameter::"));
         expectations.will(AbstractExpectations.returnValue("::stub return value::"));

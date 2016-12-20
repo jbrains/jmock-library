@@ -4,6 +4,7 @@ import org.jmock.AbstractExpectations;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.api.Action;
+import org.jmock.syntax.ReceiverClause;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -21,7 +22,8 @@ public class ConflictingExpectationsTest {
         final Expectations expectations = new Expectations();
 
         // allowing() must come before with()
-        final ArbitraryInterface allowing = expectations.allowing(arbitraryInterface);
+        final ReceiverClause atLeastZeroCalls = expectations.atLeast(0);
+        final ArbitraryInterface allowing = atLeastZeroCalls.of(arbitraryInterface);
         final String matchParameterForStub = expectations.with("::arbitrary parameter::");
         allowing.arbitraryMethod(matchParameterForStub);
         final Action returnValueActionForStub = AbstractExpectations.returnValue("::stub return value::");
@@ -31,7 +33,8 @@ public class ConflictingExpectationsTest {
         // we have called allowing() earlier in this test, the two
         // statements appear to be able to be safely reordered here
         // in this context.
-        final ArbitraryInterface oneOf = expectations.oneOf(arbitraryInterface);
+        final ReceiverClause exactlyOneCall = expectations.exactly(1);
+        final ArbitraryInterface oneOf = exactlyOneCall.of(arbitraryInterface);
         final String matchParameterForExpectation = expectations.with("::arbitrary parameter::");
         oneOf.arbitraryMethod(matchParameterForExpectation);
         final Action returnValueActionForExpectation = AbstractExpectations.returnValue("::expectation return value::");

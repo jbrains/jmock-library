@@ -24,11 +24,18 @@ public class ConflictingExpectationsTest {
         final ArbitraryInterface allowing = expectations.allowing(arbitraryInterface);
         final String matchParameterForStub = expectations.with("::arbitrary parameter::");
         allowing.arbitraryMethod(matchParameterForStub);
-        final Action returnValueAction = AbstractExpectations.returnValue("::stub return value::");
-        expectations.will(returnValueAction);
+        final Action returnValueActionForStub = AbstractExpectations.returnValue("::stub return value::");
+        expectations.will(returnValueActionForStub);
 
-        expectations.oneOf(arbitraryInterface).arbitraryMethod(expectations.with("::arbitrary parameter::"));
-        expectations.will(AbstractExpectations.returnValue("::expectation return value::"));
+        // oneOf() probably needs to come before with(), but since
+        // we have called allowing() earlier in this test, the two
+        // statements appear to be able to be safely reordered here
+        // in this context.
+        final ArbitraryInterface oneOf = expectations.oneOf(arbitraryInterface);
+        final String matchParameterForExpectation = expectations.with("::arbitrary parameter::");
+        oneOf.arbitraryMethod(matchParameterForExpectation);
+        final Action returnValueActionForExpectation = AbstractExpectations.returnValue("::expectation return value::");
+        expectations.will(returnValueActionForExpectation);
 
         context.checking(expectations);
 

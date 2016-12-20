@@ -1,5 +1,6 @@
 package org.jmock.test.acceptance;
 
+import org.jmock.AbstractExpectations;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.junit.Assert;
@@ -14,13 +15,12 @@ public class ConflictingExpectationsTest {
     public void sameMethodSameParameters() throws Exception {
         final ArbitraryInterface arbitraryInterface = context.mock(ArbitraryInterface.class);
 
-        final Expectations expectations = new Expectations() {{
-            allowing(arbitraryInterface).arbitraryMethod(with("::arbitrary parameter::"));
-            will(returnValue("::stub return value::"));
+        final Expectations expectations = new Expectations();
+        expectations.allowing(arbitraryInterface).arbitraryMethod(expectations.with("::arbitrary parameter::"));
+        expectations.will(AbstractExpectations.returnValue("::stub return value::"));
 
-            oneOf(arbitraryInterface).arbitraryMethod(with("::arbitrary parameter::"));
-            will(returnValue("::expectation return value::"));
-        }};
+        expectations.oneOf(arbitraryInterface).arbitraryMethod(expectations.with("::arbitrary parameter::"));
+        expectations.will(AbstractExpectations.returnValue("::expectation return value::"));
 
         context.checking(expectations);
 

@@ -17,13 +17,15 @@ public class ConflictingExpectationsTest {
         final ArbitraryInterface arbitraryInterface = context.mock(ArbitraryInterface.class);
 
         try {
-            context.checking(new Expectations() {{
+            final Expectations expectations = new Expectations() {{
                 allowing(arbitraryInterface).arbitraryMethod(with("::arbitrary parameter::"));
                 will(returnValue("::stub return value::"));
 
                 oneOf(arbitraryInterface).arbitraryMethod(with("::arbitrary parameter::"));
                 will(returnValue("::expectation return value::"));
-            }});
+            }};
+
+            context.checking(expectations);
 
             arbitraryInterface.arbitraryMethod("::arbitrary parameter::");
             fail("How did you call a method with conflicting expectations?!");
